@@ -1,3 +1,8 @@
 # exclude everything except directory foo/bar
     /*
-    !/src/*
+    !/src/JFlex.jar
+	!/src/JavaCup.jar
+	!/src/Main.java
+	!/src/test.txt
+	!/src/xml.cup
+	!/src/xml.flex
