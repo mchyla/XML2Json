@@ -1,0 +1,61 @@
+import java_cup.runtime.*;
+   
+parser code {:
+    
+
+    public void report_error(String message, Object info) 
+    {           
+        System.err.println(message);
+    }
+   
+
+    public void report_fatal_error(String message, Object info) 
+    {
+        report_error(message, info);
+        System.exit(1);
+    }
+
+:};
+   
+
+   
+/* ------------Declaration of Terminals and Non Terminals Section----------- */
+   
+
+terminal String TAG_START, TAG_CLOSE, TAG_FINISH, TEKST, NTEKST, NAGLOWEK, TEMP, DZIOBL, DZIOBP, DZIOBLC;
+//terminal String TRESC;
+   
+
+non terminal Object  dokument, xml, element, element_close, blok, lista, start_tag, close_tag, zawartosc;
+non terminal String tekst;
+   
+
+precedence left TEKST;
+/* ----------------------------Grammar Section-------------------- */
+
+/*
+  lista ::= lista element        
+  lista ::= element    
+  element ::= TAG_START CONTENT TAG_START;    
+  tekst ::= tekst PLUS skladnik
+  tekst ::= tekst MINUS skladnik
+  tekst ::= skladnik
+  skladnik ::= LICZBA
+*/   
+
+dokument ::= NAGLOWEK:n xml:x  						{: System.out.print(n.toString() + x.toString()); RESULT = new String(n.toString() + x.toString()); :}     
+		| xml:x             						{: System.out.print(x.toString());  RESULT = new String(x.toString()); :};
+xml ::= xml:x lista:l   							{: RESULT = new String(x.toString() + l.toString()); :}
+		| lista:l         							{: RESULT = new String(l.toString()); :};
+lista ::= blok:t 									{: RESULT = new String(t.toString()); :};
+blok ::= start_tag:ts zawartosc:b close_tag:tc 		{: RESULT = new String(ts.toString() + b.toString() + tc.toString()); :}
+       //| start_tag:ts blok:b TEKST:t close_tag:tc   {: RESULT = new String(ts.toString()+"\""+t.toString()+b.toString()+"\""+tc.toString()); :}
+       //| start_tag:ts TEKST:t close_tag:tc          {: RESULT = new String(ts.toString()+"\""+t.toString()+"\""+tc.toString()); :}
+		| start_tag:ts close_tag:tc                 {: RESULT = new String(ts.toString() + tc.toString()); :};
+zawartosc ::= element:e 							{: RESULT = new String(e.toString()); :}
+		| blok:b element:e 							{: RESULT = new String(e.toString() + "  "+ b.toString()); :};
+element ::= start_tag:st TEKST:t close_tag	 		{: RESULT = new String(st.toString() + t.toString()); :}
+		| start_tag:st close_tag 					{: RESULT = new String("{ }"); :};
+//tekst ::= TEKST:t 									{: RESULT =  :}
+start_tag ::= DZIOBL:dl NTEKST:t DZIOBP:dp    		{: RESULT = new String("\"" + t.toString() + "\": "); :};
+close_tag ::= DZIOBLC:dl NTEKST:t DZIOBP:dp  		{: RESULT = new String(""); :};
