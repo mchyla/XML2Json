@@ -1,5 +1,5 @@
 # XML2Json
-XML2Json with JFlex and JavaCup
+XML2Json with JFlex and JavaCup.
 
 
 To run you need to use these commands: 
